@@ -22,25 +22,39 @@ describe('jpath', function() {
             expect(jpath.split('.foo[.bar]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar']]);
         });
 
+        it('.foo[.bar.loo]', function() {
+            expect(jpath.split('.foo[.bar.loo]')).toEqual(['node', 'foo', 'predicate', ['node', ['node', 'bar', 'node', 'loo']]]);
+        });
+
         it('.foo[!.bar]', function() {
-            expect(jpath.split('.foo[!.bar]')).toEqual(['node', 'foo', 'predicate', ['operator', '!', 'node', 'bar']]);
+            expect(jpath.split('.foo[!.bar]')).toEqual(['node', 'foo', 'predicate', ['not', ['node', 'bar']]]);
         });
 
         it('.foo[.bar != "k"]', function() {
-            expect(jpath.split('.foo[.bar != "k"]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar', 'operator', '!=', 'string', 'k']]);
+            expect(jpath.split('.foo[.bar != "k"]')).toEqual(['node', 'foo', 'predicate', ['noteq', ['node', 'bar', 'string', 'k']]]);
         });
 
         it('.foo[.bar == "k"]', function() {
-            expect(jpath.split('.foo[.bar == "k"]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar', 'operator', '==', 'string', 'k']]);
+            expect(jpath.split('.foo[.bar == "k"]')).toEqual(['node', 'foo', 'predicate', ['eq', ['node', 'bar', 'string', 'k']]]);
         });
 
-       // it('.foo[1].bar', function() {
-       //     expect(jpath.split('.foo[1].bar')).toEqual(['foo', ['1'], 'bar']);
-       // });
+        it('.foo[1].bar', function() {
+            expect(jpath.split('.foo[1].bar')).toEqual(['node', 'foo', 'predicate', ['index', 1], 'node', 'bar']);
+        });
 
-       // it('.c.d[.e == "3"].d[1]', function() {
-       //     expect(jpath.split('.c.d[.e == "3"].d[1]')).toEqual(['c', 'd', ['.e', '==', '"3"'], 'd', ['1']]);
-       // });
+        it('.c.d[.e == "3"].d[1]', function() {
+            expect(jpath.split('.c.d[.e == "3"].d[1]')).toEqual(['node', 'c', 'node', 'd', 'predicate', ['eq', ['node', 'e', 'string', '3']], 'node', 'd', 'predicate', ['index', 1]]);
+        });
+
+        it('.foo[!.bar && !.loo]', function() {
+            expect(jpath.split('.foo[!.bar && !.loo]'))
+                .toEqual(['node', 'foo', 'predicate', ['and', ['not', ['node', 'bar'], 'not', ['node', 'loo']]]]);
+        });
+
+        it('.foo[.bar == "k" || .loo != "m"]', function() {
+            expect(jpath.split('.foo[.bar == "k" || .loo != "mmm"]'))
+                .toEqual(['node', 'foo', 'predicate', ['or', ['eq', ['node', 'bar', 'string', 'k'], 'noteq', ['node', 'loo', 'string', 'mmm']]]]);
+        });
 
     });
 
