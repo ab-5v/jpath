@@ -78,7 +78,8 @@ describe('jpath', function() {
                             l: 11
                         }
                     }
-                ]
+                ],
+                f: false
             }
         };
 
@@ -88,6 +89,10 @@ describe('jpath', function() {
 
         it('.c.d.e +', function() {
             expect(jpath(json, '.c.d.e')).toEqual(3);
+        });
+
+        it('.c[.f].d.e +', function() {
+            expect(jpath(json, '.c[.f].d.e')).toEqual(3);
         });
 
         it('.c.m -', function() {
