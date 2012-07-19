@@ -1,9 +1,24 @@
 (function() {
 
 // var jpath = function() {};
-var jpath = function() {
-    var a = 1;
+
+var jpath = function(json, path) {
+    console.time(path);
+    var steps = jpath.split(path);
+    var res = jpath.exec(json, steps.slice(0, 2));
+
+    for (var i = 2, l = steps.length; i < l && res !== jpath.nf; i += 2) {
+        res = jpath.exec(res, steps.slice(i, i + 2));
+    }
+
+    console.timeEnd(path);
+    return res;
 };
+
+/**
+ * Что вернёт jpath, когда ничего не найдено
+ */
+jpath.nf = undefined;
 
 
 if (typeof exports !== 'undefined') {
@@ -70,6 +85,16 @@ jpath.util = jpath.extend({
         }
 
         return res;
+    },
+
+    /**
+     * Если нужно, чтобы работало в разных фреймах,
+     * заменить на toString()
+     * @param {Array} arr
+     * @type Boolean
+     */
+    isArray: function(arr) {
+        return arr instanceof Array;
     }
 
 });
@@ -201,7 +226,6 @@ var regroup = function(tokens) {
  *  '.foo[.bar]' -> ['node', 'foo', 'pred', ['node', 'bar']]
  */
 jpath.split = function(path) {
-    console.time(path);
     var step;
     var result = [];
     var carry = jpath.util.carry;
@@ -232,8 +256,6 @@ jpath.split = function(path) {
         }
     }
 
-    console.timeEnd(path);
-
     return result;
 };
 
@@ -241,7 +263,132 @@ jpath.split = function(path) {
 
 jpath.predicate = function() {};
 
-jpath.exec = function() {};
+(function() {
+
+var nf = jpath.nf;
+var isArray = jpath.util.isArray;
+
+var executors = {
+
+    /**
+     * Поиск ноды в объекте
+     * @param {Object} json
+     * @param {String} node
+     * @param {Boolean} exist
+     * @type Object
+     */
+    node: function(json, node, exist) {
+
+        if (typeof json === 'object') {
+            if (node in json) {
+                return exist ? true : json[node];
+            }
+        }
+
+        return exist ? false : nf;
+    },
+
+    /**
+     * Возвращает объект нужного индекса
+     * ищет только оп массивам
+     * @param {Object} json
+     * @param {String} node
+     */
+    index: function(json, index) {
+
+        if (isArray(json)) {
+            if (index < json.length) {
+                return json[index];
+            }
+        }
+
+        return nf;
+    },
+
+    /**
+     * Просто возвращает строку
+     * @param {Object} json
+     * @param {String} node
+     */
+    string: function(json, string) {
+        return string;
+    },
+
+    /**
+     * Сравнивает два операнда 
+     * и возвращает true или false в зависимости от резуьтата
+     * @param {Object} json
+     * @param {String} operand
+     */
+    not: function(json, operand) {
+        return !jpath.exec(json, operand);
+    },
+
+    /**
+     * Сравнивает два операнда 
+     * и возвращает true или false в зависимости от резуьтата
+     * @param {Object} json
+     * @param {String} operands
+     */
+    eq: function(json, operands) {
+        return jpath.exec(json, operands.slice(0, 2)) == jpath.exec(json, operands.slice(2));
+    },
+
+    /**
+     * Сравнивает два операнда 
+     * и возвращает true или false в зависимости от резуьтата
+     * @param {Object} json
+     * @param {String} operands
+     */
+    noteq: function(json, operands) {
+        return jpath.exec(json, operands.slice(0, 2)) == jpath.exec(json, operands.slice(2));
+    },
+
+    /**
+     * Сравнивает два операнда 
+     * и возвращает true или false в зависимости от резуьтата
+     * @param {Object} json
+     * @param {String} operands
+     */
+    or: function(json, operands) {
+        return jpath.exec(json, operands.slice(0, 2), true) || jpath.exec(json, operands.slice(2), true);
+    },
+
+    /**
+     * Сравнивает два операнда 
+     * и возвращает true или false в зависимости от резуьтата
+     * @param {Object} json
+     * @param {String} operands
+     */
+    and: function(json, operands) {
+        return jpath.exec(json, operands.slice(0, 2), true) && jpath.exec(json, operands.slice(2), true);
+    }
+};
+
+/**
+ * Выполняет шаг
+ * @param {Object} json входной json
+ * @param {Array} step
+ * @param {Boolean} exist проверить только существование, а значение не интересно
+ */
+jpath.exec = function(json, step, exist) {
+    if (step[0] === 'predicate') {
+        // предположим что предикат может быть двух типов: проверяюший и выбирающий
+        // проверяющий возвращает true|false и тогда возвращается json
+        // выбирающий возвращает результат выбора и тогда возвращается он
+        var res = jpath.exec(json, step[1], exist);
+        if (typeof res === 'boolean') {
+            return res ? json : nf;
+        } else {
+            return res;
+        }
+    } else {
+        return executors[step[0]](json, step[1], exist);
+    }
+};
+
+
+})();
 
 
 })();

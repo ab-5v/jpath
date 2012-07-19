@@ -58,43 +58,6 @@ describe('jpath', function() {
 
     });
 
-    return;
-    describe('find', function() {
-
-        it('.foo +', function() {
-            expect( jpath.find('foo', {foo: 1}) ).toBe(1);
-        });
-
-        it('.foo -', function() {
-            expect( jpath.find('foo', {bar: 1}) ).toBe(undefined);
-        });
-
-        it('[1] +', function() {
-            expect( jpath.find(['1'], ['a', 'b']) ).toBe('b');
-        });
-
-        it('[1] -', function() {
-            expect( jpath.find(['1'], {foo: 1}) ).toBe(undefined);
-        });
-
-        it('[.bar == "1"] +', function() {
-            expect( jpath.find(['.bar', '==', '"1"'], {bar: "1"}) ).toEqual({bar: "1"});
-        });
-
-        it('[.bar == "2"] -', function() {
-            expect( jpath.find(['.bar', '==', '"2"'], {bar: "1"}) ).toEqual(undefined);
-        });
-
-        it('["1" == .bar] +', function() {
-            expect( jpath.find(['.bar', '==', '"1"'], {bar: "1"}) ).toEqual({bar: "1"});
-        });
-
-        it('["2" == .bar] -', function() {
-            expect( jpath.find(['.bar', '==', '"2"'], {bar: "1"}) ).toEqual(undefined);
-        });
-
-    });
-
     describe('full', function() {
         var json = {
             a: 1,
@@ -120,33 +83,48 @@ describe('jpath', function() {
         };
 
         it('.a +', function() {
-            expect(jpath('.a', json)).toEqual(1);
+            expect(jpath(json, '.a')).toEqual(1);
         });
 
         it('.c.d.e +', function() {
-            expect(jpath('.c.d.e', json)).toEqual(3);
+            expect(jpath(json, '.c.d.e')).toEqual(3);
         });
 
         it('.c.m -', function() {
-            expect(jpath('.a.c.m', json)).toEqual(undefined);
+            expect(jpath(json, '.a.c.m')).toEqual(undefined);
         });
 
         it('.c.d.d[2] +', function() {
-            expect(jpath('.c.d.d[2]', json)).toEqual(6);
+            expect(jpath(json, '.c.d.d[2]')).toEqual(6);
         });
 
         it('.c.n[1].d +', function() {
-            expect(jpath('.c.n[1].d', json)).toEqual({l: 11});
+            expect(jpath(json, '.c.n[1].d')).toEqual({l: 11});
         });
 
         it('.c.d[.e == "3"].d[1] +', function() {
-            expect(jpath('.c.d[.e == "3"].d[1]', json)).toEqual(5);
+            expect(jpath(json, '.c.d[.e == "3"].d[1]')).toEqual(5);
         });
 
         it('.c.d[.e == "5"] -', function() {
-            expect(jpath('.c.d[.e == "5"]', json)).toEqual(undefined);
+            expect(jpath(json, '.c.d[.e == "5"]')).toEqual(undefined);
         });
 
+        it('.c.d[!.e] +', function() {
+            expect(jpath(json, '.c.d[!.e]')).toEqual(undefined);
+        });
+
+        it('.c.d[!.c && .e].d[1] +', function() {
+            expect(jpath(json, '.c.d[!.c && .e].d[1]')).toEqual(5);
+        });
+
+        it('.c.d[.e == "5" || .e == "3"].d[1] +', function() {
+            expect(jpath(json, '.c.d[.e == "5" || .e == "3"].d[1]')).toEqual(5);
+        });
+
+        it('.c.d[.e == "5" && .e == "3"].d[1] -', function() {
+            expect(jpath(json, '.c.d[.e == "5" && .e == "3"].d[1]')).toEqual(undefined);
+        });
     });
 
 });
