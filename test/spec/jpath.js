@@ -15,17 +15,17 @@ describe('jpath', function() {
         });
 
         it('.foo[1]', function() {
-            expect(jpath.split('.foo[1]')).toEqual(['node', 'foo', 'pred', [ 'index', 1 ]]);
+            expect(jpath.split('.foo[1]')).toEqual(['node', 'foo', 'predicate', [ 'index', 1 ]]);
         });
 
         it('.foo[.bar]', function() {
-            expect(jpath.split('.foo[.bar]')).toEqual(['node', 'foo', 'pred', ['node', 'bar']]);
+            expect(jpath.split('.foo[.bar]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar']]);
         });
 
 
-       // it('.foo[.bar == "k"]', function() {
-       //     expect(jpath.split('.foo[.bar == "k"]')).toEqual(['node', 'foo', 'pred', ['node', '.bar', '==', '"k"']]);
-       // });
+        it('.foo[.bar == "k"]', function() {
+            expect(jpath.split('.foo[.bar == "k"]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar', 'operator', '==', 'string', 'k']]);
+        });
 
        // it('.foo[1].bar', function() {
        //     expect(jpath.split('.foo[1].bar')).toEqual(['foo', ['1'], 'bar']);

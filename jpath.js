@@ -34,10 +34,27 @@ jpath.util = jpath.extend({
      */
     carry: function(func) {
         var slice = Array.prototype.slice;
-        var carries = slice.apply(arguments, 1);
+        var carries = slice.call(arguments, 1);
         return function() {
             func.apply(null, carries.concat( slice.apply(arguments) ));
         }
+    },
+
+    /**
+     * Удаляет все undefined из массива
+     * @param {Array} arr
+     * @type Array
+     */
+    compact: function(arr) {
+        var res = [];
+
+        for (var i = 0, l = arr.length; i < l; i++) {
+            if (arr[i] !== undefined) {
+                res.push(arr[i]);
+            }
+        }
+
+        return res;
     }
 
 });
@@ -62,11 +79,35 @@ var reSplit = /\.(?![^\[]+\])/;
 var rePredicate = /([^\[]+)\[([^\]]+)\]/;
 
 /**
+ * Регулярные выражения для извлечения
+ * и группировки токенов из предиката
+ * @type Object
+ */
+var reTokens = {
+    'string': /("|')([^\1]*)\1/g,
+    'node': /\.([^=.\s]*)/g,
+    'index': /(\d+)/g,
+    'operator': /(==)/g
+};
+
+/**
  * Используется для заполнения строки предиката пробелами,
  * когда из него извлекаются значения
  * @type String
  */
 var placeholder = Array(100).join(' ');
+
+var replace = function(result, type, self, match, index) {
+    if (typeof index != 'number') {
+        match = index;
+        index = arguments[5];
+    }
+
+    result[index] = type;
+    result[index + 1] = type == 'index' ? match-0 : match;
+
+    return placeholder.substr(0, self.length);
+};
 
 /**
  * Сплитит jpath в массив,
@@ -79,6 +120,7 @@ jpath.split = function(path) {
     var step;
     var result = [];
     var carry = jpath.util.carry;
+    var compact = jpath.util.compact;
     var steps = path.split(reSplit).slice(1);
 
     while (step = steps.shift()) {
@@ -86,6 +128,14 @@ jpath.split = function(path) {
 
         // если удалось извлечь предикат
         if (match) {
+            result.push('node', match[1]);
+            var tokens = [];
+            for (var type in reTokens) {
+                match[2].replace(reTokens[type], carry(replace, tokens, type));
+            }
+
+            result.push('predicate');
+            result.push( compact(tokens) );
 
         } else {
             result.push('node', step);
