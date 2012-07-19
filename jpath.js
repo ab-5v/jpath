@@ -289,8 +289,19 @@ var executors = {
     node: function(json, node, exist) {
 
         if (typeof json === 'object') {
-            if (node in json) {
-                return exist ? true : json[node];
+            if (isArray(json)) {
+                var arr = [];
+                for (var i = 0, l = json.length; i < l; i++) {
+                    var res = executors.node(json[i], node, exist);
+                    if (res != nf) {
+                        arr.push(res);
+                    }
+                }
+                return exist ? !!arr.length : arr;
+            } else {
+                if (node in json) {
+                    return exist ? true : json[node];
+                }
             }
         }
 
