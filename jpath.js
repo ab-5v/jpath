@@ -97,21 +97,88 @@ jpath.find = function(part, res) {
     return NOT_FOUND;
 };
 
+var spString = /("|')([^\1]*)\1/g;
+var spNode = /\.([^=.]*)/g;
+var spIndex = /(\d+)/g;
+var spOp = /(==)/g;
+
+var ops = [
+    {
+        '!': {
+            type: 'unar',
+            func: 'not'
+        }
+    },
+    {
+        '==': {
+            type: 'binar',
+            func: 'eq'
+        }
+    }
+];
+
 jpath.split = function(path) {
+    console.time(path);
+
     var part;
     var result = [];
     var parts = path.split(/\.(?![^\[]+\])/).slice(1);
+    var placeholder = Array(100).join(' ');
+    var carry = function(f, type) {
+        return function() {
+            return f.apply(null, [type].concat(Array.prototype.slice.apply(arguments)) );
+        }
+    }
 
     while (part = parts.shift()) {
         var match = part.match(/([^\[]+)\[([^\]]+)\]/);
 
         if (match) {
-            result.push(match[1]);
-            result.push(match[2].split(' '));
+            result.push('node', match[1]);
+            var pred = [];
+            var repl = function(type, self, match, index, cop) {
+                if (typeof cop == 'number') {
+                    match = index;
+                    index = cop;
+                }
+                console.log(arguments);
+                pred[index] = [type, match];
+                return placeholder.substr(0, self.length);
+            };
+
+            match[2]
+                .replace(spString, carry(repl, 'string'))
+                .replace(spNode, carry(repl, 'node'))
+                .replace(spIndex, carry(repl, 'index'))
+                .replace(spOp, carry(repl, 'op'));
+
+            var predc = [];
+            for (var i = 0, l = pred.length; i < l; i++) {
+                if (pred[i] != undefined) {
+                    predc.push(pred[i]);
+                }
+            }
+
+            for (var j = 0, i < ops.length; j++) {
+                var op = ops[j]
+                for (var i = 0, l = predc.length; i < l; i+2) {
+                    if (predc[j] === 'op' && predc in op) {
+                        if (op[predc[j+1]] == 'unar') {
+                            var op1 = predc.splice(i+2, 2);
+                            predc.splice(i, 1);
+                            predc.splice(i, 0, [op1])
+                        }
+                    }
+                }
+            }
+
+            result.push('pred', predc);
         } else {
-            result.push(part);
+            result.push('node', part);
         }
     }
+
+    console.timeEnd(path);
 
     return result;
 };
