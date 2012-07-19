@@ -384,14 +384,30 @@ jpath.exec = function(json, step, exist) {
     exist = !!exist;
 
     if (step[0] === 'predicate') {
-        // предположим что предикат может быть двух типов: проверяюший и выбирающий
-        // проверяющий возвращает true|false и тогда возвращается json
-        // выбирающий возвращает результат выбора и тогда возвращается он
-        var res = jpath.exec(json, step[1], true);
-        if (typeof res === 'boolean') {
-            return res ? json : nf;
+
+        // если предикат выполняется в контексте массива и это не индекс
+        // то нужно проверить предикат для каждого элемента массива и собрать результат
+        if (isArray(json) && step[1][0] !== 'index') {
+            var arr = [];
+
+            for (var i = 0, l = json.length; i < l; i++) {
+                var res = jpath.exec(json[i], step);
+                if (res !== nf) {
+                    arr.push(res);
+                }
+            }
+            return arr;
+
         } else {
-            return res;
+            // предположим что предикат может быть двух типов: проверяюший и выбирающий
+            // проверяющий возвращает true|false и тогда возвращается json
+            // выбирающий возвращает результат выбора и тогда возвращается он
+            var res = jpath.exec(json, step[1], true);
+            if (typeof res === 'boolean') {
+                return res ? json : nf;
+            } else {
+                return res;
+            }
         }
     } else {
         return executors[step[0]](json, step[1], exist);

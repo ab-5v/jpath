@@ -132,4 +132,36 @@ describe('jpath', function() {
         });
     });
 
+    describe('multiple', function() {
+        var json = {
+            m: [
+                {
+                    a: 1,
+                    b: 2
+                },
+                {
+                    a: 3,
+                    b: 4
+                },
+                {
+                    a: 1,
+                    b: 6
+                }
+            ]
+        };
+
+        it('.m[1]', function() {
+            expect(jpath(json, '.m[1]')).toEqual({a: 3, b: 4});
+        });
+
+        it('.m[.a == "1"]', function() {
+            expect(jpath(json, '.m[.a == "1"]')).toEqual([{a: 1, b: 2}, {a: 1, b: 6}]);
+        });
+
+        it('.m[.a == "1"].b', function() {
+            expect(jpath(json, '.m[.a == "1"].b')).toEqual([2, 6]);
+        });
+
+    });
+
 });
