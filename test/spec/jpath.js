@@ -84,51 +84,51 @@ describe('jpath', function() {
         };
 
         it('.a +', function() {
-            expect(jpath(json, '.a')).toEqual(1);
+            expect(jpath(json, '.a')).toEqual([1]);
         });
 
         it('.c.d.e +', function() {
-            expect(jpath(json, '.c.d.e')).toEqual(3);
+            expect(jpath(json, '.c.d.e')).toEqual([3]);
         });
 
         it('.c[.f].d.e +', function() {
-            expect(jpath(json, '.c[.f].d.e')).toEqual(3);
+            expect(jpath(json, '.c[.f].d.e')).toEqual([3]);
         });
 
         it('.c.m -', function() {
-            expect(jpath(json, '.a.c.m')).toEqual(undefined);
+            expect(jpath(json, '.a.c.m')).toEqual([]);
         });
 
         it('.c.d.d[2] +', function() {
-            expect(jpath(json, '.c.d.d[2]')).toEqual(6);
+            expect(jpath(json, '.c.d.d[2]')).toEqual([6]);
         });
 
         it('.c.n[1].d +', function() {
-            expect(jpath(json, '.c.n[1].d')).toEqual({l: 11});
+            expect(jpath(json, '.c.n[1].d')).toEqual([{l: 11}]);
         });
 
         it('.c.d[.e == "3"].d[1] +', function() {
-            expect(jpath(json, '.c.d[.e == "3"].d[1]')).toEqual(5);
+            expect(jpath(json, '.c.d[.e == "3"].d[1]')).toEqual([5]);
         });
 
         it('.c.d[.e == "5"] -', function() {
-            expect(jpath(json, '.c.d[.e == "5"]')).toEqual(undefined);
+            expect(jpath(json, '.c.d[.e == "5"]')).toEqual([]);
         });
 
         it('.c.d[!.e] +', function() {
-            expect(jpath(json, '.c.d[!.e]')).toEqual(undefined);
+            expect(jpath(json, '.c.d[!.e]')).toEqual([]);
         });
 
         it('.c.d[!.c && .e].d[1] +', function() {
-            expect(jpath(json, '.c.d[!.c && .e].d[1]')).toEqual(5);
+            expect(jpath(json, '.c.d[!.c && .e].d[1]')).toEqual([5]);
         });
 
         it('.c.d[.e == "5" || .e == "3"].d[1] +', function() {
-            expect(jpath(json, '.c.d[.e == "5" || .e == "3"].d[1]')).toEqual(5);
+            expect(jpath(json, '.c.d[.e == "5" || .e == "3"].d[1]')).toEqual([5]);
         });
 
         it('.c.d[.e == "5" && .e == "3"].d[1] -', function() {
-            expect(jpath(json, '.c.d[.e == "5" && .e == "3"].d[1]')).toEqual(undefined);
+            expect(jpath(json, '.c.d[.e == "5" && .e == "3"].d[1]')).toEqual([]);
         });
     });
 
@@ -151,7 +151,7 @@ describe('jpath', function() {
         };
 
         it('.m[1]', function() {
-            expect(jpath(json, '.m[1]')).toEqual({a: 3, b: 4});
+            expect(jpath(json, '.m[1]')).toEqual([{a: 3, b: 4}]);
         });
 
         it('.m[.a == "1"]', function() {
