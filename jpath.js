@@ -1,9 +1,23 @@
 ;(function() {
 
+/**
+ * Значение, которое вернётся в случае, если по jpath-у ничего не найдено
+ */
 var NOT_FOUND = undefined;
 
+/**
+ * Проверка на массив
+ * если нужно, чтоб работало в разных фреймах, то
+ * нужно сделать через toString(), но будет медленее
+ */
 var isArray = function(a) { return a instanceof Array; }
 
+/**
+ * Ищет свойства в объекте с помощью специального синтаксиса jpath
+ * @param {String} path
+ * @param {Object}
+ * @type Object
+ */
 var jpath = function(path, json) {
     var parts = jpath.split(path);
     var res = jpath.find(parts.shift(), json);

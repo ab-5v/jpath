@@ -22,16 +22,16 @@ describe('jpath', function() {
             expect(jpath.split('.foo[.bar]')).toEqual(['foo', ['.bar']]);
         });
 
-        it('.foo[.bar = "k"]', function() {
-            expect(jpath.split('.foo[.bar = "k"]')).toEqual(['foo', ['.bar', '=', '"k"']]);
+        it('.foo[.bar == "k"]', function() {
+            expect(jpath.split('.foo[.bar == "k"]')).toEqual(['foo', ['.bar', '==', '"k"']]);
         });
 
         it('.foo[1].bar', function() {
             expect(jpath.split('.foo[1].bar')).toEqual(['foo', ['1'], 'bar']);
         });
 
-        it('.c.d[.e = "3"].d[1]', function() {
-            expect(jpath.split('.c.d[.e = "3"].d[1]')).toEqual(['c', 'd', ['.e', '=', '"3"'], 'd', ['1']]);
+        it('.c.d[.e == "3"].d[1]', function() {
+            expect(jpath.split('.c.d[.e == "3"].d[1]')).toEqual(['c', 'd', ['.e', '==', '"3"'], 'd', ['1']]);
         });
 
     });
@@ -54,20 +54,20 @@ describe('jpath', function() {
             expect( jpath.find(['1'], {foo: 1}) ).toBe(undefined);
         });
 
-        it('[.bar = "1"] +', function() {
-            expect( jpath.find(['.bar', '=', '"1"'], {bar: "1"}) ).toEqual({bar: "1"});
+        it('[.bar == "1"] +', function() {
+            expect( jpath.find(['.bar', '==', '"1"'], {bar: "1"}) ).toEqual({bar: "1"});
         });
 
-        it('[.bar = "2"] -', function() {
-            expect( jpath.find(['.bar', '=', '"2"'], {bar: "1"}) ).toEqual(undefined);
+        it('[.bar == "2"] -', function() {
+            expect( jpath.find(['.bar', '==', '"2"'], {bar: "1"}) ).toEqual(undefined);
         });
 
-        it('["1" = .bar] +', function() {
-            expect( jpath.find(['.bar', '=', '"1"'], {bar: "1"}) ).toEqual({bar: "1"});
+        it('["1" == .bar] +', function() {
+            expect( jpath.find(['.bar', '==', '"1"'], {bar: "1"}) ).toEqual({bar: "1"});
         });
 
-        it('["2" = .bar] -', function() {
-            expect( jpath.find(['.bar', '=', '"2"'], {bar: "1"}) ).toEqual(undefined);
+        it('["2" == .bar] -', function() {
+            expect( jpath.find(['.bar', '==', '"2"'], {bar: "1"}) ).toEqual(undefined);
         });
 
     });
@@ -116,12 +116,12 @@ describe('jpath', function() {
             expect(jpath('.c.n[1].d', json)).toEqual({l: 11});
         });
 
-        it('.c.d[.e = "3"].d[1] +', function() {
-            expect(jpath('.c.d[.e = "3"].d[1]', json)).toEqual(5);
+        it('.c.d[.e == "3"].d[1] +', function() {
+            expect(jpath('.c.d[.e == "3"].d[1]', json)).toEqual(5);
         });
 
-        it('.c.d[.e = "5"] -', function() {
-            expect(jpath('.c.d[.e = "5"]', json)).toEqual(undefined);
+        it('.c.d[.e == "5"] -', function() {
+            expect(jpath('.c.d[.e == "5"]', json)).toEqual(undefined);
         });
 
     });
