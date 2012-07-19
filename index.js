@@ -1,3 +1,14 @@
+/**
+ * XPath for JSON with yate-like syntax
+ *
+ * @example
+ *  jpath(json, '/.foo[.bar == "3" && !.gop || .soo].lop');
+ *
+ * @version 0.0.2
+ * @author Artur Burtsev <artjock@gmail.com>
+ *
+ */
+
 (function() {
 
 // var jpath = function() {};
