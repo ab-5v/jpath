@@ -55,12 +55,31 @@ jpath.util = jpath.extend({
         }
 
         return res;
+    },
+
+    /**
+     * Делает массивы плоскими
+     * @param {Array} arr
+     * @type Array
+     */
+    flatten: function(arr) {
+        var res = [];
+
+        for (var i = 0, l = arr.length; i < l; i++) {
+            res = res.concat(arr[i]);
+        }
+
+        return res;
     }
 
 });
 })();
 
-jpath.operator = {};
+jpath.operators = [
+    {
+        '!': ''
+    }
+];
 
 (function(){
 
@@ -87,7 +106,7 @@ var reTokens = {
     'string': /("|')([^\1]*)\1/g,
     'node': /\.([^=.\s]*)/g,
     'index': /(\d+)/g,
-    'operator': /(==)/g
+    'operator': /(==|!=|!)/g
 };
 
 /**
@@ -103,10 +122,17 @@ var replace = function(result, type, self, match, index) {
         index = arguments[5];
     }
 
-    result[index] = type;
-    result[index + 1] = type == 'index' ? match-0 : match;
+    result[index] = [type, type == 'index' ? match-0 : match];
 
     return placeholder.substr(0, self.length);
+};
+
+/**
+ * Заменяет операции в предикатах функциями
+ * @param {Array} tokens
+ * @type Array
+ */
+var regroup = function(tokens) {
 };
 
 /**
@@ -120,6 +146,7 @@ jpath.split = function(path) {
     var step;
     var result = [];
     var carry = jpath.util.carry;
+    var flatten = jpath.util.flatten;
     var compact = jpath.util.compact;
     var steps = path.split(reSplit).slice(1);
 
@@ -133,9 +160,10 @@ jpath.split = function(path) {
             for (var type in reTokens) {
                 match[2].replace(reTokens[type], carry(replace, tokens, type));
             }
+            tokens = flatten(compact(tokens));
 
             result.push('predicate');
-            result.push( compact(tokens) );
+            result.push(tokens);
 
         } else {
             result.push('node', step);

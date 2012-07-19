@@ -22,6 +22,13 @@ describe('jpath', function() {
             expect(jpath.split('.foo[.bar]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar']]);
         });
 
+        it('.foo[!.bar]', function() {
+            expect(jpath.split('.foo[!.bar]')).toEqual(['node', 'foo', 'predicate', ['operator', '!', 'node', 'bar']]);
+        });
+
+        it('.foo[.bar != "k"]', function() {
+            expect(jpath.split('.foo[.bar != "k"]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar', 'operator', '!=', 'string', 'k']]);
+        });
 
         it('.foo[.bar == "k"]', function() {
             expect(jpath.split('.foo[.bar == "k"]')).toEqual(['node', 'foo', 'predicate', ['node', 'bar', 'operator', '==', 'string', 'k']]);
