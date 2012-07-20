@@ -215,4 +215,31 @@ describe('jpath', function() {
 
     });
 
+    describe('real life', function() {
+        var json = {
+            handlers: [
+                {
+                    name: 'messages',
+                    data: {
+                        message: {
+                            id: "123",
+                            some: "324"
+                        }
+                    }
+                },
+                {
+                    name: 'folders',
+                    data: {
+                        folder: []
+                    }
+                }
+            ]
+        };
+
+        it('/.handlers[.name == "message"].data.message.id', function() {
+            expect(jpath(json, '/.handlers[.name == "messages"].data.message.id')).toEqual(["123"]);
+        });
+
+    });
+
 });
