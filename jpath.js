@@ -21,6 +21,8 @@ var jpath = function(json, path) {
         res = jpath.exec(res, steps.slice(i, i + 2));
     }
 
+    // делаем, чтобы jpath всегда возвращал массив,
+    // если ничего не найдено, то пустой массив
     if (res === jpath.nf) {
         return [];
     } else if (!jpath.util.isArray(res)) {
@@ -32,6 +34,10 @@ var jpath = function(json, path) {
 
 /**
  * Что вернёт jpath, когда ничего не найдено
+ * С тех пор, как мы захотели всегда возвращать массив
+ * используется внутри, чтобы определять,
+ * что мы ничего не нашли по селектору
+ * @private
  */
 jpath.nf = undefined;
 
