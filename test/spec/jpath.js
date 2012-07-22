@@ -34,6 +34,10 @@ describe('jpath', function() {
             expect(jpath.split('.foo[.bar != "k"]')).toEqual(['node', 'foo', 'predicate', ['noteq', ['node', 'bar', 'string', 'k']]]);
         });
 
+        it('.foo[. == "k"]', function() {
+            expect(jpath.split('.foo[. == "k"]')).toEqual(['node', 'foo', 'predicate', ['eq', ['node', '', 'string', 'k']]]);
+        });
+
         it('.foo[.bar == "k"]', function() {
             expect(jpath.split('.foo[.bar == "k"]')).toEqual(['node', 'foo', 'predicate', ['eq', ['node', 'bar', 'string', 'k']]]);
         });
@@ -136,6 +140,14 @@ describe('jpath', function() {
 
         it('.a +', function() {
             expect(jpath(json, '.a')).toEqual([1]);
+        });
+
+        it('.a[. == "1"] +', function() {
+            expect(jpath(json, '.a[. == "1"]')).toEqual([1]);
+        });
+
+        it('.a[. == "2"] -', function() {
+            expect(jpath(json, '.a[. == "2"]')).toEqual([]);
         });
 
         it('.c.d.e +', function() {

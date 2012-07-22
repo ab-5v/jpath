@@ -189,9 +189,13 @@ var replace = function(result, type, self, match, index) {
     if (type == 'index') {
         match = match-0;
     } else if (type == 'node') {
-        match = jpath.split(match);
-        if (match.length === 2) {
-            match = match[1];
+        if (match === '.') {
+            match = '';
+        } else {
+            match = jpath.split(match);
+            if (match.length === 2) {
+                match = match[1];
+            }
         }
     }
 
@@ -303,6 +307,11 @@ var executors = {
      * @type Object
      */
     node: function(json, node, exist) {
+
+        // .a[. == 'some']
+        if (node === '') {
+            return json;
+        }
 
         if (typeof json === 'object') {
             if (isArray(json)) {
