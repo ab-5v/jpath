@@ -211,6 +211,15 @@ describe('jpath', function() {
         it('.c.d.d[. == "5"] +', function() {
             expect(jpath(json, '.c.d.d[. == "5"]')).toEqual([ 5 ]);
         });
+
+        it('.c.d.d[. == "5"] + caching', function() {
+            var caching = jpath.caching;
+            jpath.caching = true;
+            for (var i = 5; i--;) {
+                expect(jpath(json, '.c.d.d[. == "5"]')).toEqual([ 5 ]);
+            }
+            jpath.caching = caching;
+        });
     });
 
     describe('multiple', function() {

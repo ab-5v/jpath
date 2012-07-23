@@ -33,6 +33,11 @@ var jpath = function(json, path) {
     }
 };
 
+/**
+ * Существенное время занимает AST
+ * его можно кэшировать
+ */
+jpath.caching = true;
 
 
 if (typeof exports !== 'undefined') {
@@ -255,6 +260,12 @@ var regroup = function(tokens) {
 };
 
 /**
+ * Кэш path <-> AST
+ * @type Object
+ */
+var cache = {};
+
+/**
  * Сплитит jpath в массив,
  * который потом используется для поиска по json-у
  * @example
@@ -262,6 +273,11 @@ var regroup = function(tokens) {
  *  '.foo[.bar]' -> ['node', 'foo', 'pred', ['node', 'bar']]
  */
 jpath.split = function(path) {
+
+    if (jpath.caching && path in cache) {
+        return cache[path];
+    }
+
     var step;
     var result = [];
     var compact = jpath.util.compact;
@@ -296,6 +312,10 @@ jpath.split = function(path) {
         } else {
             result.push('node', step);
         }
+    }
+
+    if (jpath.caching) {
+        cache[path] = result;
     }
 
     return result;
