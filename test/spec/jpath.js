@@ -72,7 +72,9 @@ describe('jpath', function() {
                 'a-b': 1,
                 '1': 2,
                 'undefined': 3,
-                '0': 4
+                '0': 4,
+                'some': '',
+                'somef': false
             }
         };
 
@@ -114,6 +116,14 @@ describe('jpath', function() {
 
         it('.a[.b-a].undefined +', function() {
             expect(jpath(json, '.a[.b-a].undefined')).toEqual([]);
+        });
+
+        it('.a.some +', function() {
+            expect(jpath(json, '.a.some')).toEqual(['']);
+        });
+
+        it('.a.somef +', function() {
+            expect(jpath(json, '.a.somef')).toEqual([false]);
         });
     });
 
@@ -264,6 +274,15 @@ describe('jpath', function() {
                     data: {
                         folder: []
                     }
+                },
+                {
+                    name: 'settings',
+                    data: {
+                        prop1: 'on',
+                        prop2: '',
+                        prop3: 'on',
+                        prop4: ''
+                    }
                 }
             ]
         };
@@ -273,13 +292,28 @@ describe('jpath', function() {
         });
 
         it('/.handlers.name', function() {
-            expect(jpath(json, '/.handlers.name')).toEqual(['messages', 'folders']);
+            expect(jpath(json, '/.handlers.name')).toEqual(['messages', 'folders', 'settings']);
         });
 
         it('/.handlers[0].data.message.*', function() {
             expect(jpath(json, '/.handlers[0].data.message.*')).toEqual(['123', '324']);
         });
 
+        it('/.handlers[.name == "settings"].data.prop3[. == "on"]', function() {
+            expect(jpath(json, '/.handlers[.name == "settings"].data.prop3[. == "on"]')).toEqual(['on']);
+        });
+
+        it('/.handlers[.name == "settings"].data.prop4[. == "on"]', function() {
+            expect(jpath(json, '/.handlers[.name == "settings"].data.prop4[. == "on"]')).toEqual([]);
+        });
+
+        it('/.handlers[.name == "settings"].data.prop2[. != "on"]', function() {
+            expect(jpath(json, '/.handlers[.name == "settings"].data.prop2[. != "on"]')).toEqual(['']);
+        });
+
+        it('/.handlers[.name == "settings"].data.prop3[. != "on"]', function() {
+            expect(jpath(json, '/.handlers[.name == "settings"].data.prop3[. != "on"]')).toEqual([]);
+        });
     });
 
 });
