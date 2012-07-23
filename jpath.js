@@ -64,18 +64,6 @@ jpath.extend = function(to, from) {
 };
 
 jpath.util = jpath.extend({
-    /**
-     * Прокидывает параметр в вызов функции
-     * @param {Function} func
-     * @param {Object} param
-     */
-    carry: function(func) {
-        var slice = Array.prototype.slice;
-        var carries = slice.call(arguments, 1);
-        return function() {
-            return func.apply(null, carries.concat( slice.apply(arguments) ));
-        }
-    },
 
     /**
      * Удаляет все undefined из массива
@@ -89,21 +77,6 @@ jpath.util = jpath.extend({
             if (arr[i] !== undefined) {
                 res.push(arr[i]);
             }
-        }
-
-        return res;
-    },
-
-    /**
-     * Делает массивы плоскими
-     * @param {Array} arr
-     * @type Array
-     */
-    flatten: function(arr) {
-        var res = [];
-
-        for (var i = 0, l = arr.length; i < l; i++) {
-            res = res.concat(arr[i]);
         }
 
         return res;
@@ -286,7 +259,6 @@ var regroup = function(tokens) {
 jpath.split = function(path) {
     var step;
     var result = [];
-    var flatten = jpath.util.flatten;
     var compact = jpath.util.compact;
     var steps = path.split(reSplit);
     if (steps[0] === '' || steps[0] === '/') {
@@ -307,7 +279,7 @@ jpath.split = function(path) {
             // если в предикате не индекс - делаем полную проверку
             } else {
                 tokens = tokenizer.parse(predicate);
-                tokens = flatten(compact(tokens));
+                tokens = Array.prototype.concat.apply([], compact(tokens));
                 tokens = regroup(tokens);
             }
 
