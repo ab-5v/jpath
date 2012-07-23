@@ -4,7 +4,7 @@
  * @example
  *  jpath(json, '/.foo[.bar == "3" && !.gop || .soo].lop');
  *
- * @version 0.0.4
+ * @version 0.0.5
  * @author Artur Burtsev <artjock@gmail.com>
  * @link https://github.com/artjock/jpath
  *
@@ -161,47 +161,79 @@ var reSplit = /\.(?![^\[]+\])/;
  */
 var rePredicate = /([^\[]+)\[([^\]]+)\]/;
 
-/**
- * Регулярные выражения для извлечения
- * и группировки токенов из предиката
- * @type Object
- */
-var reTokens = {
-    'string': /("|')([^\1]*?)\1/g,
-    'node': /(\.[^=\s!]*)/g,
-    'index': /(\d+)/g,
-    'operator': /(==|!=|!|\|\||&&)/g
-};
+var reIndex = /^\s*(\d+)\s*$/;
 
 /**
- * Используется для заполнения строки предиката пробелами,
- * когда из него извлекаются значения
- * @type String
+ * Строку предиката заменяет на массив токенов
  */
-var placeholder = Array(100).join(' ');
+var tokenizer = {
+    /**
+     * Массив с токенами - результат работы parse
+     * @type Array
+     */
+    result: [],
 
-var replace = function(result, type, self, match, index) {
-    if (typeof index != 'number') {
-        match = index;
-        index = arguments[5];
-    }
+    /**
+    * Используется для заполнения строки предиката пробелами,
+    * когда из него извлекаются значения
+    * @type String
+    */
+    placeholder: Array(100).join(' '),
 
-    if (type == 'index') {
-        match = match-0;
-    } else if (type == 'node') {
-        if (match === '.') {
-            match = '';
-        } else {
-            match = jpath.split(match);
-            if (match.length === 2) {
-                match = match[1];
+    /**
+     * Типы токенов, котрые могу встретиться в предикате
+     * в формате [re1, replacer1, re2, replacer2, ...]
+     * порядок важен
+     * @type Array
+     */
+    parsers: [
+        // string
+        /("|')([^\1]*?)\1/g,
+        function(self, quote, match, index) {
+            tokenizer.result[index] = ['string', match];
+            return tokenizer.placeholder.substr(0, self.length);
+        },
+        // node
+        /(\.[^=\s!]*)/g,
+        function(self, match, index) {
+
+            if (match === '.') {
+                match = '';
+            } else {
+                match = jpath.split(match);
+
+                if (match.length === 2) {
+                    match = match[1];
+                }
             }
+
+            tokenizer.result[index] = ['node', match];
+            return tokenizer.placeholder.substr(0, self.length);
+        },
+        // operator
+        /(==|!=|!|\|\||&&)/g,
+        function(self, match, index) {
+            tokenizer.result[index] = ['operator', match];
+            return tokenizer.placeholder.substr(0, self.length);
         }
+    ],
+
+    /**
+     * Заменяет предикат набором токенов
+     * @example
+     *  '.foo == "bar"' -> ['node', 'foo', 'operator', '==', 'string', 'bar']
+     * @param {String} predicate
+     * @type {Array}
+     */
+    parse: function(predicate) {
+        this.result = [];
+
+        for (var i = 0; i < this.parsers.length; i+=2) {
+            predicate = predicate.replace(this.parsers[i], this.parsers[i+1]);
+        }
+
+        return this.result;
     }
-
-    result[index] = [type, match];
-
-    return placeholder.substr(0, self.length);
 };
 
 /**
@@ -254,7 +286,6 @@ var regroup = function(tokens) {
 jpath.split = function(path) {
     var step;
     var result = [];
-    var carry = jpath.util.carry;
     var flatten = jpath.util.flatten;
     var compact = jpath.util.compact;
     var steps = path.split(reSplit);
@@ -267,18 +298,21 @@ jpath.split = function(path) {
 
         // если удалось извлечь предикат
         if (match) {
-            result.push('node', match[1]);
-
-            var tokens = [];
             var predicate = match[2];
-            for (var type in reTokens) {
-                predicate = predicate.replace(reTokens[type], carry(replace, tokens, type));
-            }
-            tokens = flatten(compact(tokens));
-            tokens = regroup(tokens);
+            var mIndex = predicate.match(reIndex);
 
-            result.push('predicate');
-            result.push(tokens);
+            // сначала делаем лёгкую проверку на индекс (.foo[1])
+            if (mIndex) {
+                tokens = ['index', mIndex[1] - 0];
+            // если в предикате не индекс - делаем полную проверку
+            } else {
+                tokens = tokenizer.parse(predicate);
+                tokens = flatten(compact(tokens));
+                tokens = regroup(tokens);
+            }
+
+            result.push('node', match[1]);
+            result.push('predicate', tokens);
 
         } else {
             result.push('node', step);
