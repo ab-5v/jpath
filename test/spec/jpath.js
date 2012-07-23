@@ -207,6 +207,10 @@ describe('jpath', function() {
         it('.c.d[.e == "5" && .e == "3"].d[1] -', function() {
             expect(jpath(json, '.c.d[.e == "5" && .e == "3"].d[1]')).toEqual([]);
         });
+
+        it('.c.d.d[. == "5"] +', function() {
+            expect(jpath(json, '.c.d.d[. == "5"]')).toEqual([ 5 ]);
+        });
     });
 
     describe('multiple', function() {
