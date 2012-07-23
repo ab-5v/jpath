@@ -4,7 +4,7 @@
  * @example
  *  jpath(json, '/.foo[.bar == "3" && !.gop || .soo].lop');
  *
- * @version 0.0.7
+ * @version 0.0.8
  * @author Artur Burtsev <artjock@gmail.com>
  * @link https://github.com/artjock/jpath
  *
