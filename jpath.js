@@ -145,9 +145,9 @@ var reSplit = /\.(?![^\[]+\])/;
  * Извелекает содержимое предиката
  * @type RegExp
  */
-var rePredicate = /([^\[]+)\[([^\]]+)\]/;
+var rePredicate = /^([^\[]+)\[(\s*[^\]]+)\s*\]$/;
 
-var reIndex = /^\s*(\d+)\s*$/;
+var reIndex = /^(\d+)$/;
 
 /**
  * Строку предиката заменяет на массив токенов
@@ -275,6 +275,7 @@ jpath.split = function(path) {
     var compact = jpath.util.compact;
     var flatten = jpath.util.flatten;
     var steps = path.split(reSplit);
+
     if (steps[0] === '' || steps[0] === '/') {
         steps = steps.slice(1);
     }
