@@ -330,7 +330,14 @@ var executors = {
                 }
                 return exist ? !!arr.length : arr;
             } else {
-                if (node in json) {
+                if (node === '*') {
+                    var arr = [];
+                    for (var key in json) {
+                        arr.push(json[key]);
+                    }
+                    return exist ? !!arr.length : arr;
+
+                } else if (node in json) {
                     return exist ? true : json[node];
                 }
             }

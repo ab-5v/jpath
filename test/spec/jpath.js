@@ -10,6 +10,10 @@ describe('jpath', function() {
             expect(jpath.split('/.foo')).toEqual(['node', 'foo']);
         });
 
+        it('.*', function() {
+            expect(jpath.split('.*')).toEqual(['node', '*']);
+        });
+
         it('.foo.bar', function() {
             expect(jpath.split('.foo.bar')).toEqual(['node', 'foo', 'node', 'bar']);
         });
@@ -213,16 +217,32 @@ describe('jpath', function() {
             ]
         };
 
-        it('.m[1]', function() {
+        it('.m[1] +', function() {
             expect(jpath(json, '.m[1]')).toEqual([{a: 3, b: 4}]);
         });
 
-        it('.m[.a == "1"]', function() {
+        it('.m[.a == "1"] +', function() {
             expect(jpath(json, '.m[.a == "1"]')).toEqual([{a: 1, b: 2}, {a: 1, b: 6}]);
         });
 
-        it('.m[.a == "1"].b', function() {
+        it('.m[.a == "1"].b +', function() {
             expect(jpath(json, '.m[.a == "1"].b')).toEqual([2, 6]);
+        });
+
+        it('.* +', function() {
+            expect(jpath(json, '.*')).toEqual([json.m]);
+        });
+
+        it('.m[0].* +', function() {
+            expect(jpath(json, '.m[0].*')).toEqual([1, 2]);
+        });
+
+        it('.m.* +', function() {
+            expect(jpath(json, '.m.*')).toEqual([[1, 2], [3, 4], [1, 6]]);
+        });
+
+        it('.*.* +', function() {
+            expect(jpath(json, '.*.*')).toEqual([[[1, 2], [3, 4], [1, 6]]]);
         });
 
     });
@@ -250,6 +270,14 @@ describe('jpath', function() {
 
         it('/.handlers[.name == "message"].data.message.id', function() {
             expect(jpath(json, '/.handlers[.name == "messages"].data.message.id')).toEqual(["123"]);
+        });
+
+        it('/.handlers.name', function() {
+            expect(jpath(json, '/.handlers.name')).toEqual(['messages', 'folders']);
+        });
+
+        it('/.handlers[0].data.message.*', function() {
+            expect(jpath(json, '/.handlers[0].data.message.*')).toEqual(['123', '324']);
         });
 
     });
