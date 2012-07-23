@@ -33,14 +33,6 @@ var jpath = function(json, path) {
     }
 };
 
-/**
- * Что вернёт jpath, когда ничего не найдено
- * С тех пор, как мы захотели всегда возвращать массив
- * используется внутри, чтобы определять,
- * что мы ничего не нашли по селектору
- * @private
- */
-jpath.nf = undefined;
 
 
 if (typeof exports !== 'undefined') {
@@ -315,7 +307,14 @@ jpath.predicate = function() {};
 
 (function() {
 
-var nf = jpath.nf;
+/**
+ * Что вернёт jpath, когда ничего не найдено
+ * С тех пор, как мы захотели всегда возвращать массив
+ * используется внутри, чтобы определять,
+ * что мы ничего не нашли по селектору
+ * @private
+ */
+var nf = jpath.nf = undefined;
 var isArray = jpath.util.isArray;
 
 var executors = {
