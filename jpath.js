@@ -50,6 +50,7 @@ if (typeof exports !== 'undefined') {
 }
 
 (function() {
+
 jpath.extend = function(to, from) {
     if (!from) {
         from = to;
@@ -62,6 +63,8 @@ jpath.extend = function(to, from) {
 
     return to;
 };
+
+var concat = Array.prototype.concat;
 
 jpath.util = jpath.extend({
 
@@ -80,6 +83,16 @@ jpath.util = jpath.extend({
         }
 
         return res;
+    },
+
+    /**
+     * Выравнивает массив на один уровень
+     *  [1,2,[3],4] -> [1,2,3,4]
+     * @param {Array} arr
+     * @type Array
+     */
+    flatten: function(arr) {
+        return concat.apply([], arr);
     },
 
     /**
@@ -260,6 +273,7 @@ jpath.split = function(path) {
     var step;
     var result = [];
     var compact = jpath.util.compact;
+    var flatten = jpath.util.flatten;
     var steps = path.split(reSplit);
     if (steps[0] === '' || steps[0] === '/') {
         steps = steps.slice(1);
@@ -279,7 +293,7 @@ jpath.split = function(path) {
             // если в предикате не индекс - делаем полную проверку
             } else {
                 tokens = tokenizer.parse(predicate);
-                tokens = Array.prototype.concat.apply([], compact(tokens));
+                tokens = flatten(compact(tokens));
                 tokens = regroup(tokens);
             }
 
