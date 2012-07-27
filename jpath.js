@@ -4,7 +4,7 @@
  * @example
  *  jpath(json, '/.foo[.bar == "3" && !.gop || .soo].lop');
  *
- * @version 0.0.8
+ * @version 0.0.9
  * @author Artur Burtsev <artjock@gmail.com>
  * @link https://github.com/artjock/jpath
  *
@@ -39,6 +39,8 @@ var jpath = function(json, path) {
  */
 jpath.caching = true;
 
+
+jpath.version = '0.0.9'
 
 if (typeof exports !== 'undefined') {
     exports = jpath;
