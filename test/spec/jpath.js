@@ -94,11 +94,11 @@ describe('jpath', function() {
             expect(jpath(json, '.a.0')).toEqual([4]);
         });
 
-        it('.a[.a-b == \'1\'].1 +', function() {
-            expect(jpath(json, '.a[.a-b == \'1\'].1')).toEqual([2]);
+        it('.a[.a-b == "1"].1 +', function() {
+            expect(jpath(json, '.a[.a-b == "1"].1')).toEqual([2]);
         });
 
-        it('.a[.a-b == \'2\'] -', function() {
+        it('.a[.a-b == "2"] -', function() {
             expect(jpath(json, '.a[.a-b == "2"]')).toEqual([]);
         });
 

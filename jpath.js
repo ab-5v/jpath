@@ -171,8 +171,8 @@ var tokenizer = {
      */
     parsers: [
         // string
-        /("|')([^\1]*?)\1/g,
-        function(self, quote, match, index) {
+        /"([^"]*?)"/g,
+        function(self, match, index) {
             tokenizer.result[index] = ['string', match];
             return tokenizer.placeholder.substr(0, self.length);
         },
