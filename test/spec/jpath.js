@@ -125,6 +125,46 @@ describe('jpath', function() {
         it('.a.somef +', function() {
             expect(jpath(json, '.a.somef')).toEqual([false]);
         });
+
+        it('.foo.bar in undefined', function() {
+            expect(jpath(undefined, '.foo.bar')).toEqual([]);
+        });
+
+        it('.foo.bar in null', function() {
+            expect(jpath(null, '.foo.bar')).toEqual([]);
+        });
+
+        it('.foo.bar in empty', function() {
+            expect(jpath('', '.foo.bar')).toEqual([]);
+        });
+
+        it('.foo.bar in not empty string', function() {
+            expect(jpath('foo', '.foo.bar')).toEqual([]);
+        });
+
+        it('.foo.bar in number', function() {
+            expect(jpath(123, '.foo.bar')).toEqual([]);
+        });
+
+        it('empty string in some object', function() {
+            expect(jpath(json, '')).toEqual([]);
+        });
+
+        it('udefined in some object', function() {
+            expect(jpath(json, undefined)).toEqual([]);
+        });
+
+        it('null in some object', function() {
+            expect(jpath(json, null)).toEqual([]);
+        });
+
+        it('number in some object', function() {
+            expect(jpath(json, 123)).toEqual([]);
+        });
+
+        it('object in some object', function() {
+            expect(jpath(json, {foo: 'bar'})).toEqual([]);
+        });
     });
 
     describe('full', function() {

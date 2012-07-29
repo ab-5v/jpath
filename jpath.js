@@ -14,7 +14,19 @@
 
 // var jpath = function() {};
 
+/**
+ * Извлекает из объекта json значение,
+ * хранящееся по пути path
+ * @param {Object} json
+ * @param {String} path
+ */
 var jpath = function(json, path) {
+
+    // проверка типов
+    if (json === null || typeof path !== 'string' || path === '') {
+        return [];
+    }
+
     var steps = jpath.split(path);
     var res = jpath.exec(json, steps.slice(0, 2));
 
