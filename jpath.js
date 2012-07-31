@@ -24,9 +24,10 @@ var jpath = function(json, path) {
 
     // проверка типов
     // более подробная проверка есть в exec
-    if (json === null || !path) {
+    if (json === null || !path || typeof path !== 'string') {
         return [];
     }
+    if (path === '.') { return [ json ]; }
 
     var steps = jpath.split(path);
     var res = jpath.exec(json, steps.slice(0, 2));
@@ -157,7 +158,7 @@ var reSplit = /\.(?![^\[]+\])/;
  * Извелекает содержимое предиката
  * @type RegExp
  */
-var rePredicate = /^([^\[]+)\[(\s*[^\]]+)\s*\]$/;
+var rePredicate = /^([^\[]+)?\[(\s*[^\]]+)\s*\]$/;
 
 var reIndex = /^(\d+)$/;
 
@@ -321,7 +322,9 @@ jpath.split = function(path) {
                 tokens = regroup(tokens);
             }
 
-            result.push('node', match[1]);
+            if (match[1]) {
+                result.push('node', match[1]);
+            }
             result.push('predicate', tokens);
 
         } else {

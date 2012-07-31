@@ -165,6 +165,10 @@ describe('jpath', function() {
         it('object in some object', function() {
             expect(jpath(json, {foo: 'bar'})).toEqual([]);
         });
+
+        it('.', function() {
+            expect(jpath(json, '.')).toEqual([json]);
+        });
     });
 
     describe('full', function() {
@@ -202,6 +206,10 @@ describe('jpath', function() {
 
         it('.a[. == "2"] -', function() {
             expect(jpath(json, '.a[. == "2"]')).toEqual([]);
+        });
+
+        it('.[.b == "2"]', function() {
+            expect(jpath(json, '.[.b == "2"]')).toEqual([json]);
         });
 
         it('.c.d.e +', function() {
@@ -306,6 +314,37 @@ describe('jpath', function() {
 
         it('.*.* +', function() {
             expect(jpath(json, '.*.*')).toEqual([[[1, 2], [3, 4], [1, 6]]]);
+        });
+
+    });
+
+    describe('raw array', function() {
+        var json = [
+            {
+                a: 1,
+                b: 2
+            },
+            {
+                a: 3,
+                b: 4,
+                c: 5
+            },
+            {
+                a: 1,
+                b: 6
+            }
+        ];
+
+        it('.[.a == "3"]', function() {
+            expect(jpath(json, '.[.a == "3"]')).toEqual([{a: 3, b: 4, c: 5}]);
+        });
+
+        it('.[.a == "1"]', function() {
+            expect(jpath(json, '.[.a == "1"]')).toEqual([{a: 1, b: 2}, {a: 1, b: 6}]);
+        });
+
+        it('.[.c]', function() {
+            expect(jpath(json, '.[.c]')).toEqual([{a: 3, b: 4, c: 5}]);
         });
 
     });
