@@ -192,7 +192,10 @@ describe('jpath', function() {
                         }
                     }
                 ],
-                f: false
+                ea: [],
+                f: false,
+                u: undefined,
+                nu: null
             }
         };
 
@@ -216,8 +219,28 @@ describe('jpath', function() {
             expect(jpath(json, '.c.d.e')).toEqual([3]);
         });
 
-        it('.c[.f].d.e +', function() {
-            expect(jpath(json, '.c[.f].d.e')).toEqual([3]);
+        it('.c[.f].d.e -', function() {
+            expect(jpath(json, '.c[.f].d.e')).toEqual([]);
+        });
+
+        it('.c[.u].d.e -', function() {
+            expect(jpath(json, '.c[.u].d.e')).toEqual([]);
+        });
+
+        it('.c[.nu].d.e -', function() {
+            expect(jpath(json, '.c[.nu].d.e')).toEqual([]);
+        });
+
+        it('.c[.ea].d.e -', function() {
+            expect(jpath(json, '.c[.nu].d.e')).toEqual([]);
+        });
+
+        it('.c[.n].d.e +', function() {
+            expect(jpath(json, '.c[.n].d.e')).toEqual([3]);
+        });
+
+        it('.c[.d].d.e +', function() {
+            expect(jpath(json, '.c[.n].d.e')).toEqual([3]);
         });
 
         it('.c.m -', function() {
