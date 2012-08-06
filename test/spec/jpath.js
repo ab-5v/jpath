@@ -431,4 +431,41 @@ describe('jpath', function() {
         });
     });
 
+    describe('cmp arrays', function() {
+        var json = {
+            a: [
+                { b: [1,2,3], c: [2,4,5] },
+                { b: [] },
+                { b: [4, 5, 6], d: [7, 8, 9]}
+            ]
+        }
+
+        it('.a[!.b] +', function() {
+            expect(jpath(json, '.a[!.b]')).toEqual([{b: []}]);
+        });
+
+        it('.a[.b] +', function() {
+            expect(jpath(json, '.a[.b]')).toEqual([{b: [1, 2, 3], c: [2, 4, 5]}, { b: [4, 5, 6], d: [7, 8, 9]}]);
+        });
+
+        it('.a[.b == "1"] +', function() {
+            expect(jpath(json, '.a[.b == "1"]')).toEqual([{b: [1, 2, 3], c: [2, 4, 5]}]);
+        });
+
+        it('.a[.b == "7"] -', function() {
+            expect(jpath(json, '.a[.b == "7"]')).toEqual([]);
+        });
+
+        it('.a["1" == .b] +', function() {
+            expect(jpath(json, '.a["1" == .b]')).toEqual([{b: [1, 2, 3], c: [2, 4, 5]}]);
+        });
+
+        it('.a[.c == .b] +', function() {
+            expect(jpath(json, '.a[.c == .b]')).toEqual([{b: [1, 2, 3], c: [2, 4, 5]}]);
+        });
+
+        it('.a[.b != .c] +', function() {
+            expect(jpath(json, '.a[.c != .b]')).toEqual([{b: []}, {b: [4, 5, 6], d: [7, 8, 9]}]);
+        });
+    });
 });
