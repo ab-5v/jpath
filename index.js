@@ -4,7 +4,7 @@
  * @example
  *  jpath(json, '/.foo[.bar == "3" && !.gop || .soo].lop');
  *
- * @version 0.0.13
+ * @version 0.0.14
  * @author Artur Burtsev <artjock@gmail.com>
  * @link https://github.com/artjock/jpath
  *
@@ -15,7 +15,7 @@
 // var jpath = function() {};
 require('lib/jpath.js');
 
-jpath.version = '0.0.13'
+jpath.version = '0.0.14'
 
 if (typeof exports !== 'undefined') {
     exports = jpath;
