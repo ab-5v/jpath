@@ -429,6 +429,7 @@ describe('jpath', function() {
         it('/.handlers[.name == "settings"].data.prop3[. != "on"]', function() {
             expect(jpath(json, '/.handlers[.name == "settings"].data.prop3[. != "on"]')).toEqual([]);
         });
+
     });
 
     describe('cmp arrays', function() {
@@ -466,6 +467,53 @@ describe('jpath', function() {
 
         it('.a[.b != .c] +', function() {
             expect(jpath(json, '.a[.c != .b]')).toEqual([{b: []}, {b: [4, 5, 6], d: [7, 8, 9]}]);
+        });
+    });
+
+    describe('deep select', function() {
+        var json1 = {
+            a: [
+                {b: {c: 1}, d: 4, n: {m: 1}},
+                {b: {c: 2}, d: 5, n: {m: 2}},
+                {b: {c: 3}, d: 6, n: {m: 4}},
+            ]
+        };
+
+        var json2 = {
+            a: { b: {c: 1}, e: {f: 1}, r: 8},
+            d: { b: {c: 2}, e: {f: 1}, r: 9}
+        };
+
+        it('.a[.b.c == "1"].d +', function() {
+            expect(jpath(json1, '.a[.b.c == "1"].d')).toEqual([4]);
+        });
+
+        it('.a[.b.c == "3"].d +', function() {
+            expect(jpath(json1, '.a[.b.c == "3"].d')).toEqual([6]);
+        });
+
+        it('.a[.b.c == "5"].d -', function() {
+            expect(jpath(json1, '.a[.b.c == "5"].d')).toEqual([]);
+        });
+
+        it('.a[.b.c == .n.m].d +', function() {
+            expect(jpath(json1, '.a[.b.c == .n.m].d')).toEqual([4, 5]);
+        });
+
+        it('.a[.b.c != .n.m].d +', function() {
+            expect(jpath(json1, '.a[.b.c != .n.m].d')).toEqual([6]);
+        });
+
+        it('.a[.b.c == "1"].r +', function() {
+            expect(jpath(json2, '.a[.b.c == "1"].r')).toEqual([8]);
+        });
+
+        it('.a[.b.c == .e.f].r +', function() {
+            expect(jpath(json2, '.a[.b.c == .e.f].r')).toEqual([8]);
+        });
+
+        it('.d[.b.c != .e.f].r +', function() {
+            expect(jpath(json2, '.d[.b.c != .e.f].r')).toEqual([9]);
         });
     });
 });
