@@ -521,4 +521,5 @@ describe('jpath', function() {
             expect(jpath(json2, '.d[.b.c != .e.f].r')).to.eql([9]);
         });
     });
+
 });
