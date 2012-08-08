@@ -56,8 +56,8 @@ jpath.caching = true;
 
 jpath.version = '0.0.14'
 
-if (typeof exports !== 'undefined') {
-    exports = jpath;
+if (typeof module !== 'undefined') {
+    module.exports = jpath;
 } else {
     window.jpath = jpath;
 }
@@ -294,7 +294,7 @@ jpath.split = function(path) {
         return cache[path];
     }
 
-    var step;
+    var step, tokens;
     var result = [];
     var compact = jpath.util.compact;
     var flatten = jpath.util.flatten;

@@ -17,8 +17,8 @@ require('lib/jpath.js');
 
 jpath.version = '0.0.14'
 
-if (typeof exports !== 'undefined') {
-    exports = jpath;
+if (typeof module !== 'undefined') {
+    module.exports = jpath;
 } else {
     window.jpath = jpath;
 }
