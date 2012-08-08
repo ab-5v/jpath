@@ -1,0 +1,30 @@
+{
+    "name": "jpath",
+    "version": "0.0.1",
+    "description": "XPath for JSON with yate-like syntax",
+    "keywords": [
+        "json",
+        "tool",
+        "xpath",
+        "select"
+    ],
+    "author": {
+        "name": "Artur Burtsev",
+        "email": "artjock@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/artjock/jpath.git"
+    },
+    "main": "./jpath",
+    "engines": {
+        "node": "*"
+    },
+    "scripts": {
+        "test": "make test"
+    },
+    "devDependencies": {
+        "mocha": "*",
+        "expect": "*"
+    }
+}
