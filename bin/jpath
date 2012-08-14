@@ -13,7 +13,7 @@ if (args.validate) {
     args.validate.forEach(function(path) {
         jpath.split(path);
         var res =
-            !/^\.|^\/\./.test(path[0]) ||
+            !/^\.|^\/\./.test(path) ||
             /[^\s]+/.test(jpath.lastSteps.join(''))
                 ? 'fail' : 'pass';
 

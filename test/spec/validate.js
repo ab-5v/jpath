@@ -15,6 +15,8 @@ describe('--validate', function() {
 
     it('.foo', should('pass'));
 
+    it('/.foo', should('pass'));
+
     it('.foo[.bar = "1"]', should('fail'));
 
     it('.foo[bar == "1"]', should('fail'));
