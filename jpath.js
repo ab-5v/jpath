@@ -231,6 +231,8 @@ var tokenizer = {
             predicate = predicate.replace(this.parsers[i], this.parsers[i+1]);
         }
 
+        jpath.lastSteps.push(predicate);
+
         return this.result;
     }
 };
@@ -281,6 +283,8 @@ var regroup = function(tokens) {
  */
 var cache = {};
 
+jpath.lastSteps = [];
+
 /**
  * Сплитит jpath в массив,
  * который потом используется для поиска по json-у
@@ -294,6 +298,7 @@ jpath.split = function(path) {
         return cache[path];
     }
 
+    jpath.lastSteps = [];
     var step, tokens;
     var result = [];
     var compact = jpath.util.compact;

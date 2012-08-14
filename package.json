@@ -23,6 +23,9 @@
     "scripts": {
         "test": "make test"
     },
+    "dependencies": {
+        "nopt": "*"
+    },
     "devDependencies": {
         "mocha": "*",
         "expect.js": "*"
