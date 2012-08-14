@@ -17,6 +17,6 @@ if (args.validate) {
             /[^\s]+/.test(jpath.lastSteps.join(''))
                 ? 'fail' : 'pass';
 
-        console.log(res, path, jpath.split(path));
+        console.log(res, path);
     });
 }
