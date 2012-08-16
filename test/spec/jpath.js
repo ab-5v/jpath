@@ -444,7 +444,7 @@ describe('jpath', function() {
                 { b: [] },
                 { b: [4, 5, 6], d: [7, 8, 9]}
             ]
-        }
+        };
 
         it('.a[!.b] +', function() {
             expect(jpath(json, '.a[!.b]')).to.eql([{b: []}]);
@@ -480,7 +480,7 @@ describe('jpath', function() {
             a: [
                 {b: {c: 1}, d: 4, n: {m: 1}},
                 {b: {c: 2}, d: 5, n: {m: 2}},
-                {b: {c: 3}, d: 6, n: {m: 4}},
+                {b: {c: 3}, d: 6, n: {m: 4}}
             ]
         };
 
