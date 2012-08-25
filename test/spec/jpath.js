@@ -1,9 +1,12 @@
 if (typeof require == 'function') {
-    var jpath = require('../../jpath');
-    var expect = require('expect.js');
+    jpath = require('../../jpath');
+    expect = require('expect.js');
 }
 
 describe('jpath', function() {
+
+    // IE Stack crash hack
+    beforeEach(function(done){ setTimeout(done, 0); });
 
     describe('split', function() {
 
@@ -72,6 +75,7 @@ describe('jpath', function() {
     });
 
     describe('exotic', function() {
+
         var json = {
             'a': {
                 'a-b': 1,

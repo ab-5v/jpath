@@ -27,6 +27,8 @@
         "nopt": "*"
     },
     "devDependencies": {
+        "uglify-js": "*",
+        "requirer": "0.0.1",
         "mocha": "*",
         "expect.js": "*"
     }

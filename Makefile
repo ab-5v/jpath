@@ -1,14 +1,17 @@
 TESTS=test/spec/*.js
 
-all: build
+all: npm build
+
+npm:
+	npm install
 
 build:
-	requirer index.js jpath.js
+	./node_modules/requirer/bin/requirer index.js jpath.js
 
 prod: build
-	uglifyjs -o jpath.min.js jpath.js
+	./node_modules/uglify-js/bin/uglifyjs -o jpath.min.js jpath.js
 
 test:
-	mocha --reporter dot $(TESTS)
+	./node_modules/mocha/bin/mocha --reporter dot $(TESTS)
 
 .PHONY: all test
