@@ -21,6 +21,8 @@
  * @param {String} path
  */
 var jpath = function(json, path) {
+    var nf = jpath.nf;
+    var exec = jpath.exec;
 
     // проверка типов
     // более подробная проверка есть в exec
@@ -30,15 +32,15 @@ var jpath = function(json, path) {
     if (path === '.') { return [ json ]; }
 
     var steps = jpath.split(path);
-    var res = jpath.exec(json, steps.slice(0, 2));
+    var res = exec(json, [steps[0], steps[1]]);
 
-    for (var i = 2, l = steps.length; i < l && res !== jpath.nf; i += 2) {
-        res = jpath.exec(res, steps.slice(i, i + 2));
+    for (var i = 2, l = steps.length; i < l && res !== nf; i += 2) {
+        res = exec(res, [steps[i], steps[i + 1]]);
     }
 
     // делаем, чтобы jpath всегда возвращал массив,
     // если ничего не найдено, то пустой массив
-    if (res === jpath.nf) {
+    if (res === nf) {
         return [];
     } else if (!jpath.util.isArray(res)) {
         return [res];
@@ -414,8 +416,11 @@ var executors = {
         }
 
         if (typeof json === 'object') {
+            if (node in json) {
+                var val = json[node];
+                return exist ? !!(isArray(val) ? val.length : val) : json[node];
             // в массиве нужно выполнить шаг для каждого элемента
-            if (isArray(json)) {
+            } else if (isArray(json)) {
                 var arr = [];
                 for (var i = 0, l = json.length; i < l; i++) {
                     var res = jpath.exec(json[i], ['node', node], exist);
@@ -432,18 +437,13 @@ var executors = {
                 }
                 return res;
             // иначе просто получаем значение node из json
-            } else {
-                if (node === '*') {
-                    var arr = [];
-                    for (var key in json) {
-                        arr.push(json[key]);
-                    }
-                    return exist ? !!arr.length : arr;
-
-                } else if (node in json) {
-                    var val = json[node];
-                    return exist ? !!(isArray(val) ? val.length : val) : json[node];
+            } else if (node === '*') {
+                var arr = [];
+                for (var key in json) {
+                    arr.push(json[key]);
                 }
+                return exist ? !!arr.length : arr;
+
             }
         }
 
@@ -493,7 +493,7 @@ var executors = {
      * @param {String} operands
      */
     eq: function(json, operands) {
-        return cmp( jpath.exec(json, operands.slice(0, 2)), jpath.exec(json, operands.slice(2)) );
+        return cmp( jpath.exec(json, [operands[0], operands[1]]), jpath.exec(json, [operands[2], operands[3]]) );
     },
 
     /**
@@ -535,12 +535,14 @@ var executors = {
  */
 jpath.exec = function(json, step, exist) {
     exist = !!exist;
+    var type = step[0];
+    var value = step[1];
 
-    if (step[0] === 'predicate') {
+    if (type === 'predicate') {
 
         // если предикат выполняется в контексте массива и это не индекс
         // то нужно проверить предикат для каждого элемента массива и собрать результат
-        if (isArray(json) && step[1][0] !== 'index') {
+        if (isArray(json) && value[0] !== 'index') {
             var arr = [];
 
             for (var i = 0, l = json.length; i < l; i++) {
@@ -555,7 +557,7 @@ jpath.exec = function(json, step, exist) {
             // предположим что предикат может быть двух типов: проверяюший и выбирающий
             // проверяющий возвращает true|false и тогда возвращается json
             // выбирающий возвращает результат выбора и тогда возвращается он
-            var res = jpath.exec(json, step[1], true);
+            var res = jpath.exec(json, value, true);
             if (typeof res === 'boolean') {
                 return res ? json : nf;
             } else {
@@ -563,7 +565,7 @@ jpath.exec = function(json, step, exist) {
             }
         }
     } else {
-        return executors[step[0]](json, step[1], exist);
+        return executors[type](json, value, exist);
     }
 };
 
