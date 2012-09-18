@@ -14,4 +14,4 @@ jpath(json, '/.foo[. == "1" || .lop != "bar"]');
 jpath(json, '/.foo.*');
 ```
 
-Болье примеров использования: https://github.com/artjock/jpath/blob/master/test/spec/jpath.js
+Больше примеров использования: https://github.com/artjock/jpath/blob/master/test/spec/jpath.js
