@@ -115,7 +115,7 @@ jpath.util = jpath.extend({
      * @type Boolean
      */
     isArray: function(arr) {
-        return arr instanceof Array;
+        return Object.prototype.toString.call(arr) === '[object Array]';
     }
 
 });
