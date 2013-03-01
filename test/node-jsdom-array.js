@@ -1,4 +1,4 @@
-var jpath = require('../jpath') 
+var jpath = require('../jpath.min.js') 
   , jsdom = require('jsdom');
 
 var window = jsdom.jsdom().createWindow();
