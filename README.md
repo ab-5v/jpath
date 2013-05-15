@@ -3,6 +3,16 @@ jpath
 
 XPath for JSON with [yate](https://github.com/pasaran/yate)-friendly syntax.
 
+### Instalation
+#### Node
+```
+npm install jpath
+```
+#### Browser
+```html
+<script src="./jpath.min.js"></script>
+```
+
 ### Usage
 
 ```js
