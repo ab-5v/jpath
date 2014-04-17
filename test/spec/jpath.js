@@ -240,6 +240,10 @@ describe('jpath', function() {
             expect(jpath(json, '.c[.nu].d.e')).to.eql([]);
         });
 
+        it('.c.nu.d.e -', function() {
+            expect(jpath(json, '.c.nu.d.e')).to.eql([]);
+        });
+
         it('.c[.ea].d.e -', function() {
             expect(jpath(json, '.c[.nu].d.e')).to.eql([]);
         });
