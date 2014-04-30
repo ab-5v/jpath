@@ -413,7 +413,7 @@ var executors = {
             return json;
         }
 
-        if (typeof json === 'object') {
+        if (typeof json === 'object' && json !== null) {
             // в массиве нужно выполнить шаг для каждого элемента
             if (isArray(json)) {
                 var arr = [];

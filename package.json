@@ -1,6 +1,6 @@
 {
     "name": "jpath",
-    "version": "0.0.19",
+    "version": "0.0.20",
     "description": "XPath for JSON with yate-like syntax",
     "keywords": [
         "json",
